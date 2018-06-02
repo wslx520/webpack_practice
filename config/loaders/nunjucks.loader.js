@@ -2,11 +2,9 @@ const nunjucks = require('nunjucks');
 const loaderUtils = require("loader-utils");
 const  path = require('path')
 
-	// nunjucks.configure(options.views);
-	nunjucks.configure('./src');
 let hasSet = false;
 let viewRoot = null;
-const main = function (file) {
+const njkLoader = function (file) {
 	const options = loaderUtils.getOptions(this);
 
 	if (!hasSet) {
@@ -20,8 +18,11 @@ const main = function (file) {
 	const relativePath = path.relative(viewRoot, currentPath);
 	console.log(currentPath, relativePath);
 	console.log('ooooooooooo',options);
-	console.log(nunjucks.render(relativePath, {name:'test'}))
-	return 'test'
+	const str = nunjucks.render(relativePath, {name:'test'});
+	console.log(str, path.basename(relativePath, path.extname(relativePath)));
+	this.emitFile(path.basename(relativePath, path.extname(relativePath)) + '.html', str);
+	return '';
+	// this.callback(null, nunjucks.render(relativePath, {name:'test'}) ) 
 }
 
-module.exports = main;
+module.exports = njkLoader;
